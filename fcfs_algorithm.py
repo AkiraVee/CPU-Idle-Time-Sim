@@ -1,6 +1,5 @@
 # fcfs.py
 # First Come First Served CPU Scheduling
-# Tangina mo jersey
 
 def fcfs():
 
@@ -98,7 +97,7 @@ def fcfs():
     print("Throughput:", throughput)
     print("Average Waiting Time:", avg_waiting_time)
     print("Average Turnaround Time:", avg_turnaround_time)
-    print("tangina mo jersey")
+
 
 
 # run program
