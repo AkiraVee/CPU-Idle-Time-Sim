@@ -7,16 +7,11 @@ def round_robin():
     # { ENTER INPUTS }
     process_count = int(input("ENTER process count: "))
 
-    arrival_time = []
-    burst_time = []
-
     print("ENTER arrival times:")
-    for i in range(process_count):
-        arrival_time.append(int(input(f"P{i+1}: ")))
-
+    arrival_time = [int(input(f"P{i+1}: ")) for i in range(process_count)]
+    
     print("ENTER burst times:")
-    for i in range(process_count):
-        burst_time.append(int(input(f"P{i+1}: ")))
+    burst_time = [int(input(f"P{i+1}: ")) for i in range(process_count)]
 
     time_quantum = int(input("ENTER time quantum: "))
 
