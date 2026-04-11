@@ -1,24 +1,3 @@
-def main():
-    print("CPU Scheduling Algorithms")
-    print("-------------------------")
-    print("1. First-Come, First-Served (FCFS)")
-    print("2. Shortest Job First (SJF)")
-    print("3. Priority Scheduling")
-    print("4. Round Robin")
-    
-    choice = input("\nChoose a scheduling algorithm (1-4): ")
-    
-    if choice == "1":
-        print("FCFS file")
-    elif choice == "2":
-        print("SJF file")
-    elif choice == "3":
-        print("Priority Scheduling file")
-    elif choice == "4":
-        print("Round Robin file")
-        round_robin()
-    else:
-        print("Invalid choice. Please select 1-4.")
 
 # round_robin.py
 # Round Robin CPU Scheduling (CLI version)
@@ -153,6 +132,5 @@ def round_robin():
     print("Throughput:", throughput)
     print("Average Waiting Time:", avg_waiting_time)
     print("Average Turnaround Time:", avg_turnaround_time)
-        
-if __name__ == "__main__":
-    main()
+
+round_robin()
