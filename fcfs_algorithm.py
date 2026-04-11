@@ -40,14 +40,18 @@ def fcfs():
     #==============================
     for i in processes:
 
+        # If the CPU is idle, jump to next arrival
         if current_time < arrival_time[i]:
             current_time = arrival_time[i]
 
+        # Record start time and update current time
         start_time[i] = current_time
         gantt_chart.append(f"P{i+1}")
 
+        # Execute process fully
         current_time += burst_time[i]
 
+        # Record finish time
         finish_time[i] = current_time
         gantt_time.append(current_time)
 
@@ -62,9 +66,12 @@ def fcfs():
 
     for i in range(process_count):
 
+        # Turnaround time = finish time - arrival time
         tat = finish_time[i] - arrival_time[i]
-        wt = tat - burst_time[i]
 
+        # Waiting time = turnaround time - burst time
+        wt = tat - burst_time[i]
+    
         turnaround_time.append(tat)
         waiting_time.append(wt)
 
