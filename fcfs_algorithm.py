@@ -150,10 +150,9 @@ def fcfs():
     print("Average Waiting Time:", avg_waiting_time)
     print("Average Turnaround Time:", avg_turnaround_time)
 
-
-
 # run program
-fcfs()
+while True:
+    fcfs()
 
     # Ask if user wants to use the algorithm again
     while True:

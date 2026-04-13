@@ -1,26 +1,24 @@
-import json
-import os
+import sqlite3
 
-DATABASE_FILE = "users.json"
+DATABASE_FILE = "users.db"
 
 
 # =========================
 # INITIALIZE DATABASE
 # =========================
 def initialize_database():
-    if not os.path.exists(DATABASE_FILE):
-        with open(DATABASE_FILE, "w") as file:
-            json.dump({}, file)
-
-
-def load_users():
-    with open(DATABASE_FILE, "r") as file:
-        return json.load(file)
-
-
-def save_users(users):
-    with open(DATABASE_FILE, "w") as file:
-        json.dump(users, file, indent=4)
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            username TEXT PRIMARY KEY,
+            password TEXT NOT NULL,
+            security_question TEXT NOT NULL,
+            security_answer TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
 
 # =========================
@@ -32,7 +30,7 @@ def login_or_signup():
         print("   Login or User Sign Up")
         print("==============================")
         print("1. Login")
-        print("2. Sign Up")
+        print("2. Sign Up") 
 
         choice = input("Select option (1 or 2): ")
 
@@ -48,8 +46,6 @@ def login_or_signup():
 # SIGN UP YOUR CREDENTIALS
 # =========================
 def sign_up():
-    users = load_users()
-
     print("\n==============================")
     print("          SIGN UP")
     print("==============================")
@@ -59,19 +55,24 @@ def sign_up():
     security_question = input("Enter security question: ")
     security_answer = input("Enter answer: ")
 
-    # < Credentials already exist? >
-    if username in users:
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+
+    # Check if username already exists
+    cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
+    if cursor.fetchone():
         print("\nPRINT: Account existing. Sign up new account")
+        conn.close()
         return
 
-    # Add credentials to database
-    users[username] = {
-        "password": password,
-        "security_question": security_question,
-        "security_answer": security_answer
-    }
-
-    save_users(users)
+    # Add new user
+    cursor.execute('''
+        INSERT INTO users (username, password, security_question, security_answer)
+        VALUES (?, ?, ?, ?)
+    ''', (username, password, security_question, security_answer))
+    
+    conn.commit()
+    conn.close()
     print("\nprint: account created successfully")
 
 
@@ -79,17 +80,20 @@ def sign_up():
 # LOGIN: USERNAME, PASSWORD
 # =========================
 def login():
-    users = load_users()
-
     print("\n==============================")
     print("           LOGIN")
     print("==============================")
 
     username = input("Enter username: ")
-    password = input("Enter password: ")
+    password = input("Enter password: ") 
 
-    # < User enters correct credentials? >
-    if username in users and users[username]["password"] == password:
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
+    result = cursor.fetchone()
+    conn.close()
+
+    if result and result[0] == password:
         print("\nPRINT: Welcome User")
         main_menu_file()
         return True
@@ -100,8 +104,7 @@ def login():
 
 
 # =========================
-# PRESS: 1 FORGOT PASSWORD?
-# 2 BACK TO LOGIN
+# PRESS: 1 FORGOT PASSWORD? 2 BACK TO LOGIN
 # =========================
 def forgot_or_back():
     while True:
@@ -112,7 +115,6 @@ def forgot_or_back():
 
         choice = input("Enter choice: ")
 
-        # < if you press 1 >
         if choice == "1":
             forgot_password()
             break
@@ -126,30 +128,34 @@ def forgot_or_back():
 # FORGOT PASSWORD
 # =========================
 def forgot_password():
-    users = load_users()
-
     print("\n==============================")
     print("      FORGOT PASSWORD")
     print("==============================")
 
     username = input("INPUT: Enter username: ")
 
-    # < if username is correct? >
-    if username not in users:
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT security_question, security_answer FROM users WHERE username = ?", (username,))
+    user = cursor.fetchone()
+    conn.close()
+
+    if not user:
         print("\nprint: invalid username, try again")
         forgot_or_back()
         return
 
-    print(f"\nAnswer: {users[username]['security_question']}")
+    print(f"\nAnswer: {user[0]}")
     answer = input("Your answer: ")
 
-    # < if security question is correct? >
-    if answer.lower() == users[username]["security_answer"].lower():
+    if answer.lower() == user[1].lower():
         new_password = input("\nINPUT: Enter new password: ")
 
-        # UPDATE password in database
-        users[username]["password"] = new_password
-        save_users(users)
+        conn = sqlite3.connect(DATABASE_FILE)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET password = ? WHERE username = ?", (new_password, username))
+        conn.commit()
+        conn.close()
 
         print("\nINPUT: Enter new password, to update your password")
         print("Password updated successfully.")
@@ -186,4 +192,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() 
+    main()
