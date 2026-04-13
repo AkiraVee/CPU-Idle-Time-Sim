@@ -190,10 +190,16 @@ while True:
 
     compute_metrics(processes, timeline)
 
-    again = input("\nDo you want to simulate another scheduling? (Y/N): ").strip().upper()
+    while True:
+        again = input("\nDo you want to simulate another scheduling? (Y/N): ").strip().upper()
+
+        if again in ["Y", "N", "y", "n"]:
+            break
+        else:
+            print("Please enter Y or N only.")
 
     if again != "Y":
-        print("\nGoodbye!")
+        print("\nReturning to main menu...") 
         break
 
-    print("\n" + "-"*50) #awdasdcawdca
+    print("\n" + "-"*50)
