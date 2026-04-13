@@ -35,3 +35,4 @@ To add:
 - Visualization of Idle time in Gantt Chart
 
 // testing if git works on my side - dustin
+// lantis
