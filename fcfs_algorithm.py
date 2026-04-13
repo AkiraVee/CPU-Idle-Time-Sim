@@ -125,6 +125,5 @@ def fcfs():
     print("Average Turnaround Time:", avg_turnaround_time)
 
 
-
-# run program
-fcfs()
+if __name__ == "__main__":
+    fcfs()

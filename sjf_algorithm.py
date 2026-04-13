@@ -125,4 +125,6 @@ def sjf():
     print("Average Waiting Time:", total_waiting/process_count)
     print("Average Turnaround Time:", total_turnaround/process_count)
 
-sjf()
+
+if __name__ == "__main__":
+    sjf()

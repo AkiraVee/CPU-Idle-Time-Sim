@@ -141,4 +141,5 @@ def round_robin():
     print("Average Waiting Time:", avg_waiting_time)
     print("Average Turnaround Time:", avg_turnaround_time)
 
-round_robin()
+if __name__ == "__main__":
+    round_robin()
