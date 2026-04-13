@@ -8,18 +8,44 @@ def fcfs():
     #==============================
 
     # { ENTER INPUTS }
-    process_count = int(input("ENTER process count: "))
+    while True:
+        try:
+            process_count = int(input("ENTER process count: "))
+            if process_count < 1:
+                print("Process count must be at least 1.")
+                continue
+            break
+        except ValueError:
+            print("Invalid input! Please enter a positive integer.")
 
     arrival_time = []
     burst_time = []
 
     print("ENTER arrival times:")
     for i in range(process_count):
-        arrival_time.append(int(input(f"P{i+1}: ")))
+        while True:
+            try:
+                arrival_time.append(int(input(f"P{i+1}: ")))
+                if arrival_time[-1] < 0:
+                    print("Arrival time cannot be negative.")
+                    arrival_time.pop()
+                    continue
+                break
+            except ValueError:
+                print("Invalid input! Please enter an integer.")
 
     print("ENTER burst times:")
     for i in range(process_count):
-        burst_time.append(int(input(f"P{i+1}: ")))
+        while True:
+            try:
+                bt = int(input(f"P{i+1}: "))
+                if bt <= 0:
+                    print("Burst time must be positive.")
+                    continue
+                burst_time.append(bt)
+                break
+            except ValueError:
+                print("Invalid input! Please enter a positive integer.")
 
     #==============================
     # SORT PROCESSES BY ARRIVAL TIME
@@ -125,5 +151,22 @@ def fcfs():
     print("Average Turnaround Time:", avg_turnaround_time)
 
 
-if __name__ == "__main__":
-    fcfs()
+
+# run program
+fcfs()
+
+    # Ask if user wants to use the algorithm again
+    while True:
+        again = input("\nDo you want to use the algorithm again? (Y/N): ").strip().upper()
+        
+        if again in ["Y", "N", "y", "n"]:
+            break
+        else:
+            print("Please enter Y or N only.")
+
+    if again != "Y":
+        print("\nReturning to main menu...")
+        print("Goodbye!")
+        break
+
+    print("\n" + "-" * 60)
