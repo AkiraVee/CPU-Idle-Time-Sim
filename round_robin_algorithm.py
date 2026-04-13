@@ -18,15 +18,23 @@ def round_robin():
 
     # { INITIALIZE VARIABLES }
     remaining_burst = burst_time.copy()
+
+    finish_time = [0] * process_count
+
     start_time = [-1] * process_count
     finish_time = [0] * process_count
 
     current_time = 0
+
+
     queue = []
+    in_queue = [False] * process_count
+
     gantt_chart = []
     gantt_time = [0]
 
     completed = 0
+    cpu_idle_time = 0
 
 
     # { MAIN ROUND ROBIN LOOP }
@@ -38,10 +46,14 @@ def round_robin():
                 queue.append(i)
 
         if not queue:
+            gantt_chart.append("Idle")
             current_time += 1
+            gantt_time.append(current_time)
+            cpu_idle_time += 1
             continue
 
         current = queue.pop(0)
+        in_queue[current] = False
 
         if start_time[current] == -1:
             start_time[current] = current_time
@@ -64,6 +76,7 @@ def round_robin():
 
         if remaining_burst[current] > 0:
             queue.append(current)
+            in_queue[current] = True
         else:
             finish_time[current] = current_time
             completed += 1
