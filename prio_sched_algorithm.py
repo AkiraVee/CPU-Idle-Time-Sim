@@ -196,4 +196,4 @@ while True:
         print("\nGoodbye!")
         break
 
-    print("\n" + "-"*50) #Hello World
+    print("\n" + "-"*50)
