@@ -43,7 +43,6 @@ To add:
 
 Main Menu
  - Imported and integrated all CPU scheduling algorithms
- - 
 
 FCFS, SJF, RR
  - Added error handling for invalid inputs
@@ -63,6 +62,7 @@ IMPORTANT SETUP
  - Make sure users.db is included
 
 To be fix:
+
 Main Menu
  - Navigation Flow Between Algorithms
  - Improve user interaction structure
