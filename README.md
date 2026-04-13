@@ -43,7 +43,6 @@ To add:
 
 Main Menu
  - Imported and integrated all CPU scheduling algorithms
- - 
 
 FCFS, SJF, RR
  - Added error handling for invalid inputs
