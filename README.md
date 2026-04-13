@@ -33,5 +33,3 @@ To add:
 - Can go back to main menu
 - Error handling
 - Visualization of Idle time in Gantt Chart
-
-// testing if git works on my side - dustin
