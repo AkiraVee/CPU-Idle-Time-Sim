@@ -1,4 +1,4 @@
-# sjf.py
+# sjf_algorithm.py
 # Shortest Job First CPU Scheduling (Non-Preemptive)
 
 def sjf():

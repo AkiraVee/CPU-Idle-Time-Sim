@@ -1,4 +1,4 @@
-# fcfs.py
+# fcfs_algorithm.py
 # First Come First Served CPU Scheduling
 
 def fcfs():
