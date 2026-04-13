@@ -1,5 +1,5 @@
 # prio_sched_algorithm.py
-# Priority Scheduling Simulator (Non-preemptive)
+# Priority Scheduling Simulator (Preemptive and Non-preemptive)
 
 # ===============================
 # PROCESS CLASS
