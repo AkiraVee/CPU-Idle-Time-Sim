@@ -34,7 +34,7 @@ def login_or_signup():
         print("3. Exit")                     # NEW: Added Cancel/Exit option
         print("==============================")
 
-        choice = input("Select option (1 or 2): ").strip() # added this if user types "   admin   " → .strip() makes it "admin"
+        choice = input("Select options: ").strip() # added this if user types "   admin   " → .strip() makes it "admin"
 
         if choice == "1":
             return "login"
