@@ -180,11 +180,13 @@ def round_robin():
 
 
 # ===============================
-# MAIN LOOP - Added as per your request
+# MAIN LOOP
 # ===============================
-print("=== Round Robin Scheduling Simulator ===")
+
 
 while True:
+    print("=== Round Robin (RR) Scheduling Simulator ===")
+
     round_robin()
 
     # Ask if user wants to use the algorithm again
