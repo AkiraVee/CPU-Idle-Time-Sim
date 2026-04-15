@@ -157,11 +157,13 @@ def sjf():
 
 
 # ===============================
-# MAIN LOOP - Added as per your request
+# MAIN LOOP to run the SJF simulator
 # ===============================
-print("=== Shortest Job First (SJF) Scheduling Simulator ===")
+
 
 while True:
+    print("=== Shortest Job First (SJF) Scheduling Simulator ===")
+    
     sjf()
 
     # Ask if user wants to use the algorithm again

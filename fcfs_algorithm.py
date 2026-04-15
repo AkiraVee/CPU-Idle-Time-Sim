@@ -150,8 +150,14 @@ def fcfs():
     print("Average Waiting Time:", avg_waiting_time)
     print("Average Turnaround Time:", avg_turnaround_time)
 
+# ===============================
+# MAIN LOOP to  run the FCFS simulator
+# ===============================
+
 # run program
 while True:
+    print("=== First Come First Served (FCFS) Scheduling Simulator ===")
+
     fcfs()
 
     # Ask if user wants to use the algorithm again
