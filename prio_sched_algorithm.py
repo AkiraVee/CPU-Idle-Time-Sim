@@ -14,7 +14,7 @@ def priority_scheduling():
 
         arrival_time = []
         burst_time = []
-        priority_list = []   # ✅ FIX: renamed (no conflict with function name)
+        priority_list = []
 
         print("\nENTER arrival times:")
         for i in range(process_count):
