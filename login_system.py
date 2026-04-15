@@ -31,13 +31,17 @@ def login_or_signup():
         print("==============================")
         print("1. Login")
         print("2. Sign Up") 
+        print("3. Exit")                     # NEW: Added Cancel/Exit option
+        print("==============================")
 
-        choice = input("Select option (1 or 2): ")
+        choice = input("Select options: ").strip() # added this if user types "   admin   " → .strip() makes it "admin"
 
         if choice == "1":
             return "login"
         elif choice == "2":
             return "signup"
+        elif choice == "3":
+            return "cancel"                   # NEW: Returns "cancel" to exit the program
         else:
             print("Invalid choice. Please try again.")
 
@@ -117,7 +121,7 @@ def forgot_or_back():
 
         if choice == "1":
             forgot_password()
-            break
+            return                            # CHANGED: Return to main menu after forgot password
         elif choice == "2":
             return
         else:
@@ -142,9 +146,7 @@ def forgot_password():
 
     if not user:
         print("\nprint: invalid username, try again")
-        forgot_or_back()
-        return
-
+        return                            # CHANGED: Return instead of recursive call
     print(f"\nAnswer: {user[0]}")
     answer = input("Your answer: ")
 
@@ -189,6 +191,9 @@ def main():
             sign_up()
         elif action == "login":
             login()
+        elif action == "cancel":              # NEW: Handle cancel option to exit cleanly
+            print("\nExiting program.........")
+            break
 
 
 if __name__ == "__main__":
