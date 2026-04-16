@@ -6,6 +6,7 @@ def sjf():
     # ==============================
     # INPUT
     # ==============================
+
     while True:
         try:
             process_count = int(input("ENTER process count: "))
@@ -47,6 +48,7 @@ def sjf():
     # ==============================
     # INITIALIZATION
     # ==============================
+
     completed = [False] * process_count
     start_time = [0] * process_count
     finish_time = [0] * process_count
@@ -58,9 +60,7 @@ def sjf():
     gantt_chart = []
     gantt_time = [0]   # start timeline only ONCE
 
-    # ==============================
-    # MAIN LOOP
-    # ==============================
+
     while done < process_count:
 
         idx = -1
@@ -85,7 +85,7 @@ def sjf():
             )
 
             if current_time < next_arrival:
-                gantt_chart.append("IDLE")
+                gantt_chart.append("ID")
                 cpu_idle_time += next_arrival - current_time
                 current_time = next_arrival
                 gantt_time.append(current_time)
@@ -106,9 +106,10 @@ def sjf():
         completed[idx] = True
         done += 1
 
-    # ==============================
-    # METRICS
-    # ==============================
+    #==============================
+    # COMPUTE PROCESS TABLE
+    #==============================
+
     turnaround_time = []
     waiting_time = []
 
@@ -132,8 +133,9 @@ def sjf():
     throughput = process_count / total_time
 
     # ==============================
-    # GANTT OUTPUT (FIXED FORMAT)
+    # PRINT GANTT CHART
     # ==============================
+
     print("\nGANTT CHART:")
 
     for p in gantt_chart:
@@ -141,12 +143,13 @@ def sjf():
     print("|")
 
     for t in gantt_time:
-        print(f"{t:<6}", end="")
+        print(f"{t:<5}", end="")
     print()
 
     # ==============================
     # PROCESS TABLE
     # ==============================
+
     print("\nPROCESS TABLE")
     print("Process\tTurnaround\tWaiting")
 
@@ -166,7 +169,7 @@ def sjf():
 
 
 # ===============================
-# MAIN LOOP
+# MAIN PROGRAM LOOP
 # ===============================
 while True:
     print("=== Shortest Job First (SJF) Scheduling Simulator ===")

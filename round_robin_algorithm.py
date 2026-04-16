@@ -3,7 +3,9 @@
 
 def round_robin():
 
-    # { ENTER INPUTS }
+    #==============================
+    # INPUT SECTION
+    #==============================
     while True:
         try:
             process_count = int(input("ENTER process count: "))
@@ -52,8 +54,10 @@ def round_robin():
         except ValueError:
             print("Invalid input! Please enter a positive integer.")
 
+    # ==============================
+    # INITIALIZATION
+    # ==============================
 
-    # { INITIALIZE VARIABLES }
     remaining_burst = burst_time.copy()
 
     finish_time = [0] * process_count
@@ -74,7 +78,7 @@ def round_robin():
     cpu_idle_time = 0
 
 
-    # { MAIN ROUND ROBIN LOOP }
+
     while completed < process_count:
 
         # queue management (add arrived processes)
@@ -82,8 +86,10 @@ def round_robin():
             if arrival_time[i] <= current_time and i not in queue and remaining_burst[i] > 0:
                 queue.append(i)
 
+    
+
         if not queue:
-            gantt_chart.append("Idle")
+            gantt_chart.append("Id")
             current_time += 1
             gantt_time.append(current_time)
             cpu_idle_time += 1
@@ -95,15 +101,15 @@ def round_robin():
         if start_time[current] == -1:
             start_time[current] = current_time
 
-        # { ESSENTIAL COMPUTATIONS }
-        execute_time = min(time_quantum, remaining_burst[current])
+    # ==============================
+    # PROCESS EXECUTION
+    # ==============================
 
+        execute_time = min(time_quantum, remaining_burst[current])
         gantt_chart.append(f"P{current+1}")
 
         current_time += execute_time
-
         remaining_burst[current] -= execute_time
-
         gantt_time.append(current_time)
 
         # add newly arrived processes
@@ -119,7 +125,10 @@ def round_robin():
             completed += 1
 
 
-    # { COMPUTE PROCESS TABLE }
+    #==============================
+    # COMPUTE PROCESS TABLE
+    #==============================
+    
     turnaround_time = []
     waiting_time = []
 
@@ -137,8 +146,10 @@ def round_robin():
         total_turnaround += tat
         total_waiting += wt
 
+    #==============================
+    # COMPUTE SYSTEM PERFORMANCE
+    #==============================
 
-    # { SYSTEM PERFORMANCE }
     avg_waiting_time = total_waiting / process_count
     avg_turnaround_time = total_turnaround / process_count
 
@@ -149,19 +160,24 @@ def round_robin():
     cpu_utilization = (cpu_busy_time / total_time) * 100
     throughput = process_count / total_time
 
+    #==============================
+    # PRINT GANTT CHART
+    #==============================
 
-    # { PRINT GANTT CHART }
     print("\nGANTT CHART:")
     for p in gantt_chart:
         print(f"| {p} ", end="")
     print("|")
 
     for t in gantt_time:
-        print(t, end="    ")
+        print(f"{t:<5}", end="")
     print()
 
 
-    # { PRINT PROCESS TABLE }
+    # ==============================
+    # PROCESS TABLE
+    # ==============================
+
     print("\nPROCESS TABLE")
     print("Process\tTurnaround\tWaiting")
 
@@ -169,7 +185,10 @@ def round_robin():
         print(f"P{i+1}\t{turnaround_time[i]}\t\t{waiting_time[i]}")
 
 
-    # { PRINT SYSTEM PERFORMANCE }
+    #==============================
+    # PRINT SYSTEM PERFORMANCE
+    #==============================
+
     print("\nSYSTEM PERFORMANCE")
     print("CPU Busy Time:", cpu_busy_time)
     print("CPU Idle Time:", cpu_idle_time)

@@ -7,7 +7,6 @@ def fcfs():
     # INPUT SECTION
     #==============================
 
-    # { ENTER INPUTS }
     while True:
         try:
             process_count = int(input("ENTER process count: "))
@@ -50,6 +49,7 @@ def fcfs():
     #==============================
     # SORT PROCESSES BY ARRIVAL TIME
     #==============================
+
     processes = list(range(process_count))
     processes.sort(key=lambda x: arrival_time[x])
 
@@ -69,7 +69,7 @@ def fcfs():
         # If the CPU is idle, jump to next arrival
         if current_time < arrival_time[i]:
             #INSERT IDLE TIME IN GANTT CHART
-            gantt_chart.append("IDLE")
+            gantt_chart.append("ID")
             current_time = arrival_time[i]
 
         # Record start time and update current time
@@ -111,6 +111,7 @@ def fcfs():
     #==============================
     # COMPUTE SYSTEM PERFORMANCE
     #==============================
+
     cpu_busy_time = sum(burst_time)
     avg_waiting_time = total_waiting / process_count
     avg_turnaround_time = total_turnaround / process_count
@@ -124,18 +125,20 @@ def fcfs():
     #==============================
     # PRINT GANTT CHART
     #==============================
+
     print("\nGANTT CHART:")
     for p in gantt_chart:
         print(f"| {p} ", end="")
     print("|")
 
     for t in gantt_time:
-        print(f"{t:<6}", end="")
+        print(f"{t:<5}", end="")
     print()
 
     #==============================
     # PRINT PROCESS TABLE
     #==============================
+    
     print("\nPROCESS TABLE")
     print("Process\tTurnaround\tWaiting")
 
@@ -154,10 +157,9 @@ def fcfs():
     print("Average Turnaround Time:", avg_turnaround_time)
 
 # ===============================
-# MAIN LOOP to  run the FCFS simulator
+# MAIN PROGRAM LOOP
 # ===============================
 
-# run program
 while True:
     print("=== First Come First Served (FCFS) Scheduling Simulator ===")
 
