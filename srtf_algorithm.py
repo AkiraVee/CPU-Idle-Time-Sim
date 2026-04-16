@@ -114,7 +114,7 @@ def srtf():
         print(f"P{i+1}\t{turnaround_time[i]}\t\t{waiting_time[i]}")
 
 
-
+ ;'an56'
     print("\nSYSTEM PERFORMANCE")
     print("CPU Busy Time:", cpu_busy_time)
     print("CPU Idle Time:", cpu_idle_time)
