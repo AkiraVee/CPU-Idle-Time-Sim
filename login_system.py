@@ -1,6 +1,31 @@
 import sqlite3
+import hashlib
+import msvcrt  # Only for Windows password input with *
 
 DATABASE_FILE = "users.db"
+
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+# Simple password input with asterisks (works on Windows)
+def get_password(prompt="Enter password: "):
+    print(prompt, end='', flush=True)
+    password = ""
+    while True:
+        char = msvcrt.getch()
+        if char in (b'\r', b'\n'):      # Enter
+            print()
+            break
+        elif char in (b'\x08', b'\x7f'):  # Backspace
+            if password:
+                password = password[:-1]
+                print('\b \b', end='', flush=True)
+        elif char.isalnum() or char in b'!@#$%^&*()_+-=[]{}|;:\'",.<>/?':
+            password += char.decode('utf-8')
+            print('*', end='', flush=True)
+    return password
 
 
 # =========================
@@ -22,7 +47,7 @@ def initialize_database():
 
 
 # =========================
-# PRINT: LOGIN OR SIGN UP
+# LOGIN OR SIGN UP
 # =========================
 def login_or_signup():
     while True:
@@ -31,23 +56,23 @@ def login_or_signup():
         print("==============================")
         print("1. Login")
         print("2. Sign Up") 
-        print("3. Exit")                     # NEW: Added Cancel/Exit option
+        print("3. Exit")
         print("==============================")
 
-        choice = input("Select options: ").strip() # added this if user types "   admin   " → .strip() makes it "admin"
+        choice = input("Select options: ").strip()
 
         if choice == "1":
             return "login"
         elif choice == "2":
             return "signup"
         elif choice == "3":
-            return "cancel"                   # NEW: Returns "cancel" to exit the program
+            return "cancel"
         else:
             print("Invalid choice. Please try again.")
 
 
 # =========================
-# SIGN UP YOUR CREDENTIALS
+# SIGN UP
 # =========================
 def sign_up():
     print("\n==============================")
@@ -55,25 +80,24 @@ def sign_up():
     print("==============================")
 
     username = input("Enter username: ")
-    password = input("Enter password: ")
+    password = get_password("Enter password: ")
     security_question = input("Enter security question: ")
     security_answer = input("Enter answer: ")
 
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
 
-    # Check if username already exists
     cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
     if cursor.fetchone():
         print("\nPRINT: Account existing. Sign up new account")
         conn.close()
         return
 
-    # Add new user
+    hashed_pw = hash_password(password)
     cursor.execute('''
         INSERT INTO users (username, password, security_question, security_answer)
         VALUES (?, ?, ?, ?)
-    ''', (username, password, security_question, security_answer))
+    ''', (username, hashed_pw, security_question, security_answer))
     
     conn.commit()
     conn.close()
@@ -81,7 +105,7 @@ def sign_up():
 
 
 # =========================
-# LOGIN: USERNAME, PASSWORD
+# LOGIN
 # =========================
 def login():
     print("\n==============================")
@@ -89,7 +113,7 @@ def login():
     print("==============================")
 
     username = input("Enter username: ")
-    password = input("Enter password: ") 
+    password = get_password("Enter password: ") 
 
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
@@ -97,7 +121,7 @@ def login():
     result = cursor.fetchone()
     conn.close()
 
-    if result and result[0] == password:
+    if result and result[0] == hash_password(password):
         print("\nPRINT: Welcome User")
         main_menu_file()
         return True
@@ -105,27 +129,6 @@ def login():
         print("\nPRINT: Incorrect username or password. Try again.")
         forgot_or_back()
         return False
-
-
-# =========================
-# PRESS: 1 FORGOT PASSWORD? 2 BACK TO LOGIN
-# =========================
-def forgot_or_back():
-    while True:
-        print("\n==============================")
-        print("1. Forgot Password?")
-        print("2. Back to Login")
-        print("==============================")
-
-        choice = input("Enter choice: ")
-
-        if choice == "1":
-            forgot_password()
-            return                            # CHANGED: Return to main menu after forgot password
-        elif choice == "2":
-            return
-        else:
-            print("Invalid choice. Please try again.")
 
 
 # =========================
@@ -146,20 +149,21 @@ def forgot_password():
 
     if not user:
         print("\nprint: invalid username, try again")
-        return                            # CHANGED: Return instead of recursive call
+        return
+
     print(f"\nAnswer: {user[0]}")
     answer = input("Your answer: ")
 
     if answer.lower() == user[1].lower():
-        new_password = input("\nINPUT: Enter new password: ")
+        new_password = get_password("\nINPUT: Enter new password: ")
 
         conn = sqlite3.connect(DATABASE_FILE)
         cursor = conn.cursor()
-        cursor.execute("UPDATE users SET password = ? WHERE username = ?", (new_password, username))
+        hashed_pw = hash_password(new_password)
+        cursor.execute("UPDATE users SET password = ? WHERE username = ?", (hashed_pw, username))
         conn.commit()
         conn.close()
 
-        print("\nINPUT: Enter new password, to update your password")
         print("Password updated successfully.")
         return
     else:
@@ -167,8 +171,26 @@ def forgot_password():
         forgot_or_back()
 
 
+def forgot_or_back():
+    while True:
+        print("\n==============================")
+        print("1. Forgot Password?")
+        print("2. Back to Login")
+        print("==============================")
+
+        choice = input("Enter choice: ")
+
+        if choice == "1":
+            forgot_password()
+            return
+        elif choice == "2":
+            return
+        else:
+            print("Invalid choice. Please try again.")
+
+
 # =========================
-# PENTAGON D - MAIN MENU FILE
+# MAIN MENU
 # =========================
 def main_menu_file():
     print("\n==============================")
@@ -191,7 +213,7 @@ def main():
             sign_up()
         elif action == "login":
             login()
-        elif action == "cancel":              # NEW: Handle cancel option to exit cleanly
+        elif action == "cancel":
             print("\nExiting program.........")
             break
 
