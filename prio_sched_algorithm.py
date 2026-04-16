@@ -68,7 +68,7 @@ def priority_scheduling():
     finish_time = [0] * process_count
 
     gantt_chart = []
-    gantt_time = [0]
+    gantt_time = []
 
     done = 0
 
@@ -85,9 +85,11 @@ def priority_scheduling():
 
         # CPU IDLE
         if not ready:
-            gantt_chart.append("IDLE")
+            if not gantt_chart or gantt_chart[-1] != "ID":
+                gantt_chart.append("ID")
+                gantt_time.append(current_time)
+
             current_time += 1
-            gantt_time.append(current_time)
             continue
 
         # pick highest priority (lowest number)
@@ -96,15 +98,20 @@ def priority_scheduling():
             if priority_list[i] < priority_list[idx]:
                 idx = i
 
-        start_time[idx] = current_time
-        gantt_chart.append(f"P{idx+1}")
+        # add process only if different from last
+        if not gantt_chart or gantt_chart[-1] != f"P{idx+1}":
+            gantt_chart.append(f"P{idx+1}")
+            gantt_time.append(current_time)
 
+        start_time[idx] = current_time
         current_time += burst_time[idx]
         finish_time[idx] = current_time
-        gantt_time.append(current_time)
 
         completed[idx] = True
         done += 1
+
+    # add final time
+    gantt_time.append(current_time)
 
     # ==============================
     # OUTPUT SECTION
