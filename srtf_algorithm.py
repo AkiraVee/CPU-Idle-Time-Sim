@@ -1,5 +1,5 @@
 # srtf.py
-# Shortest Remaining Time First (Preemptive)
+# Shortest Remaining Time First (Preemptive - Clean Gantt Output)
 
 def srtf():
 
@@ -50,18 +50,19 @@ def srtf():
     # INITIALIZATION
     # ==============================
 
-    remaining_burst = burst_time.copy()
-    start_time = [-1] * process_count
+    remaining = burst_time.copy()
     finish_time = [0] * process_count
 
     current_time = 0
     completed = 0
 
     gantt_chart = []
-    gantt_time = [0]
+    gantt_time = []
+
+    last_label = None  # 🔥 prevents duplication
 
     # ==============================
-    # MAIN SCHEDULING LOOP
+    # MAIN LOOP
     # ==============================
 
     while completed < process_count:
@@ -70,29 +71,43 @@ def srtf():
         min_remaining = float('inf')
 
         for i in range(process_count):
-            if arrival_time[i] <= current_time and remaining_burst[i] > 0:
-                if remaining_burst[i] < min_remaining:
-                    min_remaining = remaining_burst[i]
+            if arrival_time[i] <= current_time and remaining[i] > 0:
+                if remaining[i] < min_remaining:
+                    min_remaining = remaining[i]
                     shortest = i
 
-        # CPU IDLE
+        # ==============================
+        # IDLE CASE
+        # ==============================
         if shortest == -1:
-            gantt_chart.append("IDLE")
+            if last_label != "ID":
+                gantt_chart.append("ID")
+                gantt_time.append(current_time)
+                last_label = "ID"
+
             current_time += 1
-            gantt_time.append(current_time)
             continue
 
-        if start_time[shortest] == -1:
-            start_time[shortest] = current_time
+        process_label = f"P{shortest+1}"
 
-        gantt_chart.append(f"P{shortest+1}")
+        # ==============================
+        # PROCESS SWITCH ONLY
+        # ==============================
+        if last_label != process_label:
+            gantt_chart.append(process_label)
+            gantt_time.append(current_time)
+            last_label = process_label
+
+        # execute 1 unit
+        remaining[shortest] -= 1
         current_time += 1
-        remaining_burst[shortest] -= 1
-        gantt_time.append(current_time)
 
-        if remaining_burst[shortest] == 0:
+        if remaining[shortest] == 0:
             finish_time[shortest] = current_time
             completed += 1
+
+    # add final time
+    gantt_time.append(current_time)
 
     # ==============================
     # OUTPUT SECTION
@@ -110,40 +125,40 @@ def srtf():
     print("\nPROCESS TABLE")
     print("Process\tTurnaround\tWaiting")
 
-    total_turnaround = 0
-    total_waiting = 0
+    total_tat = 0
+    total_wt = 0
 
     for i in range(process_count):
         tat = finish_time[i] - arrival_time[i]
         wt = tat - burst_time[i]
 
-        total_turnaround += tat
-        total_waiting += wt
+        total_tat += tat
+        total_wt += wt
 
         print(f"P{i+1}\t{tat}\t\t{wt}")
 
     # ==============================
-    # SYSTEM PERFORMANCE
+    # PERFORMANCE
     # ==============================
 
-    cpu_busy_time = sum(burst_time)
+    cpu_busy = sum(burst_time)
     total_time = gantt_time[-1]
 
-    cpu_idle_time = total_time - cpu_busy_time
-    cpu_utilization = (cpu_busy_time / total_time) * 100
+    cpu_idle = total_time - cpu_busy
+    cpu_util = (cpu_busy / total_time) * 100
     throughput = process_count / total_time
 
     print("\nSYSTEM PERFORMANCE:\n")
-    print(f"CPU Busy Time: {cpu_busy_time}")
-    print(f"CPU Idle Time: {cpu_idle_time}")
-    print(f"CPU Utilization: {cpu_utilization:.2f}%")
+    print(f"CPU Busy Time: {cpu_busy}")
+    print(f"CPU Idle Time: {cpu_idle}")
+    print(f"CPU Utilization: {cpu_util:.2f}%")
     print(f"Throughput: {throughput:.2f} processes/unit time")
-    print(f"Average Waiting Time: {total_waiting / process_count:.2f}")
-    print(f"Average Turnaround Time: {total_turnaround / process_count:.2f}")
+    print(f"Average Waiting Time: {total_wt / process_count:.2f}")
+    print(f"Average Turnaround Time: {total_tat / process_count:.2f}")
 
 
 # ==============================
-# MAIN LOOP (same style as yours)
+# MAIN LOOP
 # ==============================
 
 while True:
@@ -160,8 +175,7 @@ while True:
             print("Please enter Y or N only.")
 
     if again != "Y":
-        print("\nReturning to main menu...")
-        print("Goodbye!")
+        print("\nGoodbye!")
         break
 
     print("\n" + "-" * 60)
