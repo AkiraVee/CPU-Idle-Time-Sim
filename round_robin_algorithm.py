@@ -1,19 +1,56 @@
-
-# round_robin.py
+# round_robin_algorithm.py
 # Round Robin CPU Scheduling (CLI version)
 
 def round_robin():
 
     # { ENTER INPUTS }
-    process_count = int(input("ENTER process count: "))
+    while True:
+        try:
+            process_count = int(input("ENTER process count: "))
+            if process_count < 1:
+                print("Process count must be at least 1.")
+                continue
+            break
+        except ValueError:
+            print("Invalid input! Please enter a positive integer.")
 
     print("ENTER arrival times:")
-    arrival_time = [int(input(f"P{i+1}: ")) for i in range(process_count)]
-    
-    print("ENTER burst times:")
-    burst_time = [int(input(f"P{i+1}: ")) for i in range(process_count)]
+    arrival_time = []
+    for i in range(process_count):
+        while True:
+            try:
+                at = int(input(f"P{i+1}: "))
+                if at < 0:
+                    print("Arrival time cannot be negative.")
+                    continue
+                arrival_time.append(at)
+                break
+            except ValueError:
+                print("Invalid input! Please enter an integer.")
 
-    time_quantum = int(input("ENTER time quantum: "))
+    print("ENTER burst times:")
+    burst_time = []
+    for i in range(process_count):
+        while True:
+            try:
+                bt = int(input(f"P{i+1}: "))
+                if bt <= 0:
+                    print("Burst time must be positive.")
+                    continue
+                burst_time.append(bt)
+                break
+            except ValueError:
+                print("Invalid input! Please enter a positive integer.")
+
+    while True:
+        try:
+            time_quantum = int(input("ENTER time quantum: "))
+            if time_quantum <= 0:
+                print("Time quantum must be positive.")
+                continue
+            break
+        except ValueError:
+            print("Invalid input! Please enter a positive integer.")
 
 
     # { INITIALIZE VARIABLES }
@@ -141,4 +178,29 @@ def round_robin():
     print("Average Waiting Time:", avg_waiting_time)
     print("Average Turnaround Time:", avg_turnaround_time)
 
-round_robin()
+
+# ===============================
+# MAIN LOOP
+# ===============================
+
+
+while True:
+    print("=== Round Robin (RR) Scheduling Simulator ===")
+
+    round_robin()
+
+    # Ask if user wants to use the algorithm again
+    while True:
+        again = input("\nDo you want to use the algorithm again? (Y/N): ").strip().upper()
+        
+        if again in ["Y", "N", "y", "n"]:
+            break
+        else:
+            print("Please enter Y or N only.")
+
+    if again != "Y":
+        print("\nReturning to main menu...")
+        print("Goodbye!")
+        break
+
+    print("\n" + "-" * 60)

@@ -1,4 +1,4 @@
-# sjf.py
+# sjf_algorithm.py
 # Shortest Job First CPU Scheduling (Non-Preemptive)
 
 def sjf():
@@ -7,13 +7,43 @@ def sjf():
     # INPUT
     #==============================
 
-    process_count = int(input("ENTER process count: "))
+    while True:
+        try:
+            process_count = int(input("ENTER process count: "))
+            if process_count < 1:
+                print("Process count must be at least 1.")
+                continue
+            break
+        except ValueError:
+            print("Invalid input! Please enter a positive integer.")
 
     print("ENTER arrival times:")
-    arrival_time = [int(input(f"P{i+1}: ")) for i in range(process_count)]  
+    arrival_time = []
+    for i in range(process_count):
+        while True:
+            try:
+                at = int(input(f"P{i+1}: "))
+                if at < 0:
+                    print("Arrival time cannot be negative.")
+                    continue
+                arrival_time.append(at)
+                break
+            except ValueError:
+                print("Invalid input! Please enter an integer.")
 
     print("ENTER burst times:")
-    burst_time = [int(input(f"P{i+1}: ")) for i in range(process_count)]
+    burst_time = []
+    for i in range(process_count):
+        while True:
+            try:
+                bt = int(input(f"P{i+1}: "))
+                if bt <= 0:
+                    print("Burst time must be positive.")
+                    continue
+                burst_time.append(bt)
+                break
+            except ValueError:
+                print("Invalid input! Please enter a positive integer.")
 
     # Track completed processes
     completed = [False] * process_count
@@ -47,9 +77,9 @@ def sjf():
         # If no process available, CPU is Idle
         if idx == -1:
             gantt_chart.append("Idle")
-            current_time
             gantt_time.append(current_time)
             cpu_idle_time += 1
+            current_time += 1
             continue
 
         # Execute selected process
@@ -125,4 +155,29 @@ def sjf():
     print("Average Waiting Time:", total_waiting/process_count)
     print("Average Turnaround Time:", total_turnaround/process_count)
 
-sjf()
+
+# ===============================
+# MAIN LOOP to run the SJF simulator
+# ===============================
+
+
+while True:
+    print("=== Shortest Job First (SJF) Scheduling Simulator ===")
+    
+    sjf()
+
+    # Ask if user wants to use the algorithm again
+    while True:
+        again = input("\nDo you want to use the algorithm again? (Y/N): ").strip().upper()
+        
+        if again in ["Y", "N", "y", "n"]:
+            break
+        else:
+            print("Please enter Y or N only.")
+
+    if again != "Y":
+        print("\nReturning to main menu...")
+        print("Goodbye!")
+        break
+
+    print("\n" + "-" * 60)

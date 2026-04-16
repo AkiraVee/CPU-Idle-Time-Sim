@@ -1,4 +1,4 @@
-# fcfs.py
+# fcfs_algorithm.py
 # First Come First Served CPU Scheduling
 
 def fcfs():
@@ -8,18 +8,44 @@ def fcfs():
     #==============================
 
     # { ENTER INPUTS }
-    process_count = int(input("ENTER process count: "))
+    while True:
+        try:
+            process_count = int(input("ENTER process count: "))
+            if process_count < 1:
+                print("Process count must be at least 1.")
+                continue
+            break
+        except ValueError:
+            print("Invalid input! Please enter a positive integer.")
 
     arrival_time = []
     burst_time = []
 
     print("ENTER arrival times:")
     for i in range(process_count):
-        arrival_time.append(int(input(f"P{i+1}: ")))
+        while True:
+            try:
+                arrival_time.append(int(input(f"P{i+1}: ")))
+                if arrival_time[-1] < 0:
+                    print("Arrival time cannot be negative.")
+                    arrival_time.pop()
+                    continue
+                break
+            except ValueError:
+                print("Invalid input! Please enter an integer.")
 
     print("ENTER burst times:")
     for i in range(process_count):
-        burst_time.append(int(input(f"P{i+1}: ")))
+        while True:
+            try:
+                bt = int(input(f"P{i+1}: "))
+                if bt <= 0:
+                    print("Burst time must be positive.")
+                    continue
+                burst_time.append(bt)
+                break
+            except ValueError:
+                print("Invalid input! Please enter a positive integer.")
 
     #==============================
     # SORT PROCESSES BY ARRIVAL TIME
@@ -42,10 +68,14 @@ def fcfs():
 
         # If the CPU is idle, jump to next arrival
         if current_time < arrival_time[i]:
+            #INSERT IDLE TIME IN GANTT CHART
+            gantt_chart.append("IDLE")
             current_time = arrival_time[i]
 
         # Record start time and update current time
         start_time[i] = current_time
+        if gantt_time[-1] != current_time:
+            gantt_time.append(current_time)
         gantt_chart.append(f"P{i+1}")
 
         # Execute process fully
@@ -85,7 +115,6 @@ def fcfs():
     avg_waiting_time = total_waiting / process_count
     avg_turnaround_time = total_turnaround / process_count
 
-    cpu_busy_time = sum(burst_time)
     total_time = gantt_time[-1]
 
     cpu_idle_time = total_time - cpu_busy_time
@@ -101,7 +130,7 @@ def fcfs():
     print("|")
 
     for t in gantt_time:
-        print(t, end="    ")
+        print(f"{t:<6}", end="")
     print()
 
     #==============================
@@ -124,7 +153,28 @@ def fcfs():
     print("Average Waiting Time:", avg_waiting_time)
     print("Average Turnaround Time:", avg_turnaround_time)
 
-
+# ===============================
+# MAIN LOOP to  run the FCFS simulator
+# ===============================
 
 # run program
-fcfs()
+while True:
+    print("=== First Come First Served (FCFS) Scheduling Simulator ===")
+
+    fcfs()
+
+    # Ask if user wants to use the algorithm again
+    while True:
+        again = input("\nDo you want to use the algorithm again? (Y/N): ").strip().upper()
+        
+        if again in ["Y", "N", "y", "n"]:
+            break
+        else:
+            print("Please enter Y or N only.")
+
+    if again != "Y":
+        print("\nReturning to main menu...")
+        print("Goodbye!")
+        break
+
+    print("\n" + "-" * 60)
