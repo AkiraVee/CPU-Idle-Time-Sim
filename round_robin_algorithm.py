@@ -1,11 +1,11 @@
 # round_robin_algorithm.py
-# Round Robin CPU Scheduling (FIXED GANTT VERSION)
+# Round Robin CPU Scheduling (Preemptive)
 
 def round_robin():
 
-    #==============================
+    # ==============================
     # INPUT SECTION
-    #==============================
+    # ==============================
     while True:
         try:
             process_count = int(input("\nENTER process count: "))
@@ -57,70 +57,63 @@ def round_robin():
     # ==============================
     # INITIALIZATION
     # ==============================
-
     remaining_burst = burst_time.copy()
-
     start_time = [-1] * process_count
     finish_time = [0] * process_count
 
     current_time = 0
-
     queue = []
     completed = 0
     cpu_idle_time = 0
 
-    gantt_chart = []   # (label, start, end)
+    gantt_chart = []
     gantt_time = [0]
+
+    # IMPORTANT FIX: track who already entered system
+    entered = [False] * process_count
 
     # ==============================
     # MAIN LOOP
     # ==============================
-
     while completed < process_count:
 
-        # add arrived processes
+        # Add processes that ARRIVE at current time
         for i in range(process_count):
-            if arrival_time[i] <= current_time and i not in queue and remaining_burst[i] > 0:
+            if arrival_time[i] <= current_time and not entered[i]:
                 queue.append(i)
+                entered[i] = True
 
-        # IDLE CASE
+        # Idle case
         if not queue:
-            if gantt_chart and gantt_chart[-1][0] == "ID":
-                gantt_chart[-1][2] = current_time + 1
-            else:
-                gantt_chart.append(["ID", current_time, current_time + 1])
-
+            gantt_chart.append("ID")
             current_time += 1
             gantt_time.append(current_time)
             cpu_idle_time += 1
             continue
 
+        # Process execution
         current = queue.pop(0)
 
         if start_time[current] == -1:
             start_time[current] = current_time
 
-        # EXECUTION
-        start_exec = current_time
         execute_time = min(time_quantum, remaining_burst[current])
+
+        gantt_chart.append(f"P{current+1}")
 
         current_time += execute_time
         remaining_burst[current] -= execute_time
         gantt_time.append(current_time)
 
-        # merge Gantt chart
-        label = f"P{current+1}"
-        if gantt_chart and gantt_chart[-1][0] == label:
-            gantt_chart[-1][2] = current_time
-        else:
-            gantt_chart.append([label, start_exec, current_time])
-
-        # add newly arrived processes
+        # Add NEW arrivals that came during execution
         for i in range(process_count):
-            if arrival_time[i] <= current_time and remaining_burst[i] > 0 and i not in queue and i != current:
+            if (arrival_time[i] > current_time - execute_time and
+                arrival_time[i] <= current_time and
+                not entered[i]):
                 queue.append(i)
+                entered[i] = True
 
-        # requeue or finish
+        # Requeue or finish
         if remaining_burst[current] > 0:
             queue.append(current)
         else:
@@ -128,9 +121,8 @@ def round_robin():
             completed += 1
 
     # ==============================
-    # COMPUTE TIMES
+    # COMPUTE TIMES (FIXED RR FORMULA)
     # ==============================
-
     turnaround_time = []
     waiting_time = []
 
@@ -147,6 +139,9 @@ def round_robin():
         total_turnaround += tat
         total_waiting += wt
 
+    # ==============================
+    # SYSTEM PERFORMANCE
+    # ==============================
     cpu_busy_time = sum(burst_time)
     total_time = gantt_time[-1]
 
@@ -154,23 +149,21 @@ def round_robin():
     throughput = process_count / total_time
 
     # ==============================
-    # GANTT CHART OUTPUT (FIXED)
+    # GANTT CHART OUTPUT
     # ==============================
-
     print("\nGANTT CHART:")
 
-    for item in gantt_chart:
-        print(f"| {item[0]} ", end="")
+    for p in gantt_chart:
+        print(f"| {p} ", end="")
     print("|")
 
-    for item in gantt_chart:
-        print(f"{item[1]:<5}", end="")
-    print(f"{gantt_chart[-1][2]:<5}")
+    for t in gantt_time:
+        print(f"{t:<5}", end="")
+    print()
 
     # ==============================
-    # PROCESS TABLE (same style)
+    # PROCESS TABLE
     # ==============================
-
     print("\nPROCESS TABLE")
     print("-" * 75)
     print(f"{'Process ID':<12}|{'Arrival Time':<15}|{'Burst Time':<12}|{'Turnaround':<12}|{'Waiting Time':<12}|")
@@ -186,7 +179,6 @@ def round_robin():
     # ==============================
     # SYSTEM PERFORMANCE
     # ==============================
-
     print("\nSYSTEM PERFORMANCE")
     print("CPU Busy Time:", cpu_busy_time)
     print("CPU Idle Time:", cpu_idle_time)
@@ -199,7 +191,6 @@ def round_robin():
 # ===============================
 # MAIN LOOP
 # ===============================
-
 while True:
     print("\n=== Round Robin (RR) Scheduling Simulator ===")
 
