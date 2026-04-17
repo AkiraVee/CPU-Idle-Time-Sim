@@ -9,7 +9,7 @@ def fcfs():
 
     while True:
         try:
-            process_count = int(input("ENTER process count: "))
+            process_count = int(input("\nENTER process count: "))
             if process_count < 1:
                 print("Process count must be at least 1.")
                 continue
@@ -20,7 +20,7 @@ def fcfs():
     arrival_time = []
     burst_time = []
 
-    print("ENTER arrival times:")
+    print("\nENTER arrival times:")
     for i in range(process_count):
         while True:
             try:
@@ -33,7 +33,7 @@ def fcfs():
             except ValueError:
                 print("Invalid input! Please enter an integer.")
 
-    print("ENTER burst times:")
+    print("\nENTER burst times:")
     for i in range(process_count):
         while True:
             try:
@@ -169,7 +169,7 @@ def fcfs():
 # ===============================
 
 while True:
-    print("=== First Come First Served (FCFS) Scheduling Simulator ===")
+    print("\n=== First Come First Served (FCFS) Scheduling Simulator ===")
 
     fcfs()
 

@@ -9,7 +9,7 @@ def sjf():
 
     while True:
         try:
-            process_count = int(input("ENTER process count: "))
+            process_count = int(input("\nENTER process count: "))
             if process_count < 1:
                 print("Process count must be at least 1.")
                 continue
@@ -17,7 +17,7 @@ def sjf():
         except ValueError:
             print("Invalid input! Please enter a positive integer.")
 
-    print("ENTER arrival times:")
+    print("\nENTER arrival times:")
     arrival_time = []
     for i in range(process_count):
         while True:
@@ -31,7 +31,7 @@ def sjf():
             except ValueError:
                 print("Invalid input! Please enter an integer.")
 
-    print("ENTER burst times:")
+    print("\nENTER burst times:")
     burst_time = []
     for i in range(process_count):
         while True:
@@ -151,11 +151,19 @@ def sjf():
     # ==============================
 
     print("\nPROCESS TABLE")
-    print("Process\tTurnaround\tWaiting")
-
+    print("-" * 75)
+    print(f"{'Process ID':<12}|{'Arrival Time':<15}|{'Burst Time':<12}|{'Turnaround':<12}|{'Waiting Time':<12}|")
+    print("-" * 75)
+    
     for i in range(process_count):
-        print(f"P{i+1}\t{turnaround_time[i]}\t\t{waiting_time[i]}")
-
+        print(f"{'P'+str(i+1):<12}|{arrival_time[i]:<15}|{burst_time[i]:<12}|{turnaround_time[i]:<12}|{waiting_time[i]:<12}|")
+    
+    print("-" * 75)
+    
+    # Totals
+    print(f"{'Total':<12}|{'':<15}|{'':<12}|{total_turnaround:<12}|{total_waiting:<12}|")
+    print("-" * 75)
+    
     # ==============================
     # SYSTEM PERFORMANCE
     # ==============================
@@ -172,7 +180,7 @@ def sjf():
 # MAIN PROGRAM LOOP
 # ===============================
 while True:
-    print("=== Shortest Job First (SJF) Scheduling Simulator ===")
+    print("\n=== Shortest Job First (SJF) Scheduling Simulator ===")
 
     sjf()
 
