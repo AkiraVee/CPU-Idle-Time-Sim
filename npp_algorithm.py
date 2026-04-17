@@ -1,5 +1,5 @@
 # prio_sched_algorithm.py
-# Priority Scheduling Simulator (Non-Preemptive - FIXED Gantt)
+# Priority Scheduling Simulator (Non-Preemptive)
 
 def npp_algorithm():
 

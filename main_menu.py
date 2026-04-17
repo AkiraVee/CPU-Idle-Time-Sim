@@ -4,7 +4,8 @@
 import fcfs_algorithm
 import sjf_algorithm
 import round_robin_algorithm
-import prio_sched_algorithm
+import npp_algorithm
+import pp_algorithm
 
 def main_menu():
 
