@@ -35,7 +35,6 @@ def main_menu():
 
         elif choice == "4":
             print("\nRunning Priority Scheduling...\n")
-            prio_sched_algorithm.priority_scheduling() 
 
         elif choice == "5":
             print("\nExiting program. Goodbye!")
