@@ -1,5 +1,5 @@
 # prio_sched_algorithm.py
-# Priority Scheduling Simulator (Non-preemptive)
+# Priority Scheduling Simulator (Non-Preemptive - FIXED Gantt)
 
 def priority_scheduling():
 
@@ -62,18 +62,17 @@ def priority_scheduling():
     # ==============================
 
     completed = [False] * process_count
-    current_time = 0
-
     start_time = [0] * process_count
     finish_time = [0] * process_count
 
-    gantt_chart = []
-    gantt_time = []
-
+    current_time = 0
     done = 0
 
+    gantt_chart = []   # [label, start, end]
+    gantt_time = [0]
+
     # ==============================
-    # MAIN SCHEDULING LOOP
+    # MAIN LOOP
     # ==============================
 
     while done < process_count:
@@ -83,51 +82,70 @@ def priority_scheduling():
             if arrival_time[i] <= current_time and not completed[i]
         ]
 
-        # CPU IDLE
+        # ==============================
+        # IDLE CASE
+        # ==============================
         if not ready:
-            if not gantt_chart or gantt_chart[-1] != "ID":
-                gantt_chart.append("ID")
-                gantt_time.append(current_time)
+            if gantt_chart and gantt_chart[-1][0] == "ID":
+                gantt_chart[-1][2] = current_time + 1
+            else:
+                gantt_chart.append(["ID", current_time, current_time + 1])
 
             current_time += 1
+            gantt_time.append(current_time)
             continue
 
-        # pick highest priority (lowest number)
+        # ==============================
+        # PICK HIGHEST PRIORITY
+        # ==============================
         idx = ready[0]
         for i in ready:
             if priority_list[i] < priority_list[idx]:
                 idx = i
 
-        # add process only if different from last
-        if not gantt_chart or gantt_chart[-1] != f"P{idx+1}":
-            gantt_chart.append(f"P{idx+1}")
-            gantt_time.append(current_time)
+        start_exec = current_time
 
         start_time[idx] = current_time
         current_time += burst_time[idx]
         finish_time[idx] = current_time
 
+        # ==============================
+        # FIXED GANTT MERGE
+        # ==============================
+        label = f"P{idx+1}"
+
+        if gantt_chart and gantt_chart[-1][0] == label:
+            gantt_chart[-1][2] = current_time
+        else:
+            gantt_chart.append([label, start_exec, current_time])
+
+        gantt_time.append(current_time)
+
         completed[idx] = True
         done += 1
 
-    # add final time
-    gantt_time.append(current_time)
-
     # ==============================
-    # OUTPUT SECTION
+    # GANTT CHART OUTPUT
     # ==============================
 
     print("\nGANTT CHART:")
-    for p in gantt_chart:
-        print(f"| {p} ", end="")
+
+    for block in gantt_chart:
+        print(f"| {block[0]} ", end="")
     print("|")
 
-    for t in gantt_time:
-        print(f"{t:<5}", end="")
-    print()
+    for block in gantt_chart:
+        print(f"{block[1]:<5}", end="")
+    print(gantt_chart[-1][2])
+
+    # ==============================
+    # PROCESS TABLE
+    # ==============================
 
     print("\nPROCESS TABLE")
-    print("Process\tTurnaround\tWaiting")
+    print("-" * 90)
+    print(f"{'Process ID':<12}|{'Arrival Time':<15}|{'Burst Time':<12}|{'Priority':<10}|{'Turnaround':<12}|{'Waiting Time':<12}|")
+    print("-" * 90)
 
     total_turnaround = 0
     total_waiting = 0
@@ -139,7 +157,11 @@ def priority_scheduling():
         total_turnaround += tat
         total_waiting += wt
 
-        print(f"P{i+1}\t{tat}\t\t{wt}")
+        print(f"{'P'+str(i+1):<12}|{arrival_time[i]:<15}|{burst_time[i]:<12}|{priority_list[i]:<10}|{tat:<12}|{wt:<12}|")
+
+    print("-" * 90)
+    print(f"{'Total':<12}|{'':<15}|{'':<12}|{'':<10}|{total_turnaround:<12}|{total_waiting:<12}|")
+    print("-" * 90)
 
     # ==============================
     # SYSTEM PERFORMANCE
@@ -152,13 +174,13 @@ def priority_scheduling():
     cpu_utilization = (cpu_busy_time / total_time) * 100
     throughput = process_count / total_time
 
-    print("\nSYSTEM PERFORMANCE:\n")
-    print(f"CPU Busy Time: {cpu_busy_time}")
-    print(f"CPU Idle Time: {cpu_idle_time}")
-    print(f"CPU Utilization: {cpu_utilization:.2f}%")
-    print(f"Throughput: {throughput:.2f} processes/unit time")
-    print(f"Average Waiting Time: {total_waiting / process_count:.2f}")
-    print(f"Average Turnaround Time: {total_turnaround / process_count:.2f}")
+    print("\nSYSTEM PERFORMANCE")
+    print("CPU Busy Time:", cpu_busy_time)
+    print("CPU Idle Time:", cpu_idle_time)
+    print("CPU Utilization:", cpu_utilization)
+    print("Throughput:", throughput)
+    print("Average Waiting Time:", total_waiting / process_count)
+    print("Average Turnaround Time:", total_turnaround / process_count)
 
 
 # ==============================
@@ -166,21 +188,18 @@ def priority_scheduling():
 # ==============================
 
 while True:
-    print("=== Priority Scheduling (Non-Preemptive) Scheduling Simulator ===")
+    print("\n=== Priority Scheduling (Non-Preemptive) Scheduling Simulator ===")
 
     priority_scheduling()
 
     while True:
         again = input("\nDo you want to use the algorithm again? (Y/N): ").strip().upper()
-
         if again in ["Y", "N"]:
             break
-        else:
-            print("Please enter Y or N only.")
+        print("Please enter Y or N only.")
 
     if again != "Y":
-        print("\nReturning to main menu...")
-        print("Goodbye!")
+        print("\nGoodbye!")
         break
 
     print("\n" + "-" * 60)
