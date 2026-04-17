@@ -190,7 +190,7 @@ def npp_algorithm():
 while True:
     print("\n=== Priority Scheduling (Non-Preemptive) Scheduling Simulator ===")
 
-    npp_algorithm
+    npp_algorithm()
 
     while True:
         again = input("\nDo you want to use the algorithm again? (Y/N): ").strip().upper()
