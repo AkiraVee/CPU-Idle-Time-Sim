@@ -1,12 +1,11 @@
-# srtf.py
-# Shortest Remaining Time First (Preemptive - Clean + Standardized)
+# srtf_algorithm.py
+# Shortest Remaining Time First (Preemptive) — MERGED GANTT FIX
 
 def srtf():
 
     # ==============================
     # INPUT
     # ==============================
-
     while True:
         try:
             process_count = int(input("\nENTER process count: "))
@@ -46,27 +45,24 @@ def srtf():
                 print("Invalid input! Please enter a positive integer.")
 
     # ==============================
-    # INITIALIZATION (MATCH FCFS/SJF STYLE)
+    # INITIALIZATION
     # ==============================
-
     remaining = burst_time.copy()
     finish_time = [0] * process_count
 
-    completed = [False] * process_count
-    done = 0
-
     current_time = 0
+    done = 0
     cpu_idle_time = 0
 
-    gantt_chart = []
-    gantt_time = [0]
+    # MERGED GANTT STORAGE
+    gantt = []  # (label, start, end)
 
     last_label = None
+    segment_start = 0
 
     # ==============================
     # MAIN LOOP
     # ==============================
-
     while done < process_count:
 
         idx = -1
@@ -82,10 +78,13 @@ def srtf():
         # IDLE CASE
         # ==============================
         if idx == -1:
-            if last_label != "ID":
-                gantt_chart.append("ID")
-                gantt_time.append(current_time)
-                last_label = "ID"
+            label = "ID"
+
+            if last_label != label:
+                if last_label is not None:
+                    gantt.append((last_label, segment_start, current_time))
+                segment_start = current_time
+                last_label = label
 
             current_time += 1
             cpu_idle_time += 1
@@ -94,11 +93,12 @@ def srtf():
         label = f"P{idx+1}"
 
         # ==============================
-        # FIX DUPLICATION (ONLY ON CHANGE)
+        # PROCESS SWITCH
         # ==============================
         if last_label != label:
-            gantt_chart.append(label)
-            gantt_time.append(current_time)
+            if last_label is not None:
+                gantt.append((last_label, segment_start, current_time))
+            segment_start = current_time
             last_label = label
 
         # execute 1 unit time
@@ -109,12 +109,13 @@ def srtf():
             finish_time[idx] = current_time
             done += 1
 
-    gantt_time.append(current_time)
+    # flush last segment
+    if last_label is not None:
+        gantt.append((last_label, segment_start, current_time))
 
     # ==============================
-    # PROCESS TABLE (STANDARD FORMAT)
+    # COMPUTATION
     # ==============================
-
     turnaround_time = []
     waiting_time = []
 
@@ -132,29 +133,27 @@ def srtf():
         total_waiting += wt
 
     cpu_busy_time = sum(burst_time)
-    total_time = gantt_time[-1]
+    total_time = current_time
 
     cpu_util = (cpu_busy_time / total_time) * 100
     throughput = process_count / total_time
 
     # ==============================
-    # GANTT CHART OUTPUT
+    # GANTT OUTPUT (MERGED)
     # ==============================
-
     print("\nGANTT CHART:")
 
-    for p in gantt_chart:
-        print(f"| {p} ", end="")
+    for g in gantt:
+        print(f"| {g[0]} ", end="")
     print("|")
 
-    for t in gantt_time:
-        print(f"{t:<5}", end="")
-    print()
+    for g in gantt:
+        print(f"{g[1]:<5}", end="")
+    print(f"{gantt[-1][2]:<5}")
 
     # ==============================
-    # PROCESS TABLE (MATCH SJF STYLE)
+    # PROCESS TABLE
     # ==============================
-
     print("\nPROCESS TABLE")
     print("-" * 75)
     print(f"{'Process ID':<12}|{'Arrival Time':<15}|{'Burst Time':<12}|{'Turnaround':<12}|{'Waiting Time':<12}|")
@@ -170,7 +169,6 @@ def srtf():
     # ==============================
     # SYSTEM PERFORMANCE
     # ==============================
-
     print("\nSYSTEM PERFORMANCE")
     print("CPU Busy Time:", cpu_busy_time)
     print("CPU Idle Time:", cpu_idle_time)
@@ -183,7 +181,6 @@ def srtf():
 # ==============================
 # MAIN LOOP
 # ==============================
-
 while True:
     print("\n=== SRTF (Preemptive) Scheduling Simulator ===")
 

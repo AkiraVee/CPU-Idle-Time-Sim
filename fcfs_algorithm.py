@@ -1,5 +1,5 @@
 # fcfs_algorithm.py
-# First Come First Served CPU Scheduling
+# First Come First Served CPU Scheduling (Non-Preemptive)
 
 def fcfs():
 
