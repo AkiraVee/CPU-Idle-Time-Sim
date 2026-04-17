@@ -126,6 +126,10 @@ def sjf():
         total_turnaround += tat
         total_waiting += wt
 
+    #==============================
+    # COMPUTE SYSTEM PERFORMANCE
+    #==============================
+
     cpu_busy_time = sum(burst_time)
     total_time = gantt_time[-1]
 

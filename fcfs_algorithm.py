@@ -94,6 +94,10 @@ def fcfs():
     total_turnaround = 0
     total_waiting = 0
 
+    #==============================
+    # COMPUTE PROCESS TABLE
+    #==============================
+
     for i in range(process_count):
 
         # Turnaround time = finish time - arrival time
