@@ -1,5 +1,5 @@
 # round_robin_algorithm.py
-# Round Robin CPU Scheduling (Preemptive)
+# Round Robin CPU Scheduling (FIXED + MERGED GANTT)
 
 def round_robin():
 
@@ -66,32 +66,37 @@ def round_robin():
     completed = 0
     cpu_idle_time = 0
 
-    gantt_chart = []
-    gantt_time = [0]
-
-    # IMPORTANT FIX: track who already entered system
     entered = [False] * process_count
+
+    # Gantt as INTERVALS (IMPORTANT FIX)
+    gantt_chart = []   # (label, start, end)
 
     # ==============================
     # MAIN LOOP
     # ==============================
     while completed < process_count:
 
-        # Add processes that ARRIVE at current time
+        # Add newly arrived processes
         for i in range(process_count):
             if arrival_time[i] <= current_time and not entered[i]:
                 queue.append(i)
                 entered[i] = True
 
-        # Idle case
+        # IDLE CASE (MERGED)
         if not queue:
-            gantt_chart.append("ID")
+            start = current_time
             current_time += 1
-            gantt_time.append(current_time)
             cpu_idle_time += 1
+            end = current_time
+
+            if gantt_chart and gantt_chart[-1][0] == "ID" and gantt_chart[-1][2] == start:
+                gantt_chart[-1] = ("ID", gantt_chart[-1][1], end)
+            else:
+                gantt_chart.append(("ID", start, end))
+
             continue
 
-        # Process execution
+        # PROCESS EXECUTION
         current = queue.pop(0)
 
         if start_time[current] == -1:
@@ -99,17 +104,22 @@ def round_robin():
 
         execute_time = min(time_quantum, remaining_burst[current])
 
-        gantt_chart.append(f"P{current+1}")
-
+        start = current_time
         current_time += execute_time
         remaining_burst[current] -= execute_time
-        gantt_time.append(current_time)
+        end = current_time
 
-        # Add NEW arrivals that came during execution
+        label = f"P{current+1}"
+
+        # MERGE SAME PROCESS BLOCKS
+        if gantt_chart and gantt_chart[-1][0] == label and gantt_chart[-1][2] == start:
+            gantt_chart[-1] = (label, gantt_chart[-1][1], end)
+        else:
+            gantt_chart.append((label, start, end))
+
+        # Add arrivals that happened during execution
         for i in range(process_count):
-            if (arrival_time[i] > current_time - execute_time and
-                arrival_time[i] <= current_time and
-                not entered[i]):
+            if arrival_time[i] <= current_time and not entered[i]:
                 queue.append(i)
                 entered[i] = True
 
@@ -121,7 +131,7 @@ def round_robin():
             completed += 1
 
     # ==============================
-    # COMPUTE TIMES (FIXED RR FORMULA)
+    # COMPUTE TIMES
     # ==============================
     turnaround_time = []
     waiting_time = []
@@ -140,26 +150,17 @@ def round_robin():
         total_waiting += wt
 
     # ==============================
-    # SYSTEM PERFORMANCE
-    # ==============================
-    cpu_busy_time = sum(burst_time)
-    total_time = gantt_time[-1]
-
-    cpu_utilization = (cpu_busy_time / total_time) * 100
-    throughput = process_count / total_time
-
-    # ==============================
-    # GANTT CHART OUTPUT
+    # GANTT OUTPUT (MERGED STYLE)
     # ==============================
     print("\nGANTT CHART:")
 
-    for p in gantt_chart:
-        print(f"| {p} ", end="")
+    for block in gantt_chart:
+        print(f"| {block[0]} ", end="")
     print("|")
 
-    for t in gantt_time:
-        print(f"{t:<5}", end="")
-    print()
+    for block in gantt_chart:
+        print(f"{block[1]:<5}", end="")
+    print(f"{gantt_chart[-1][2]:<5}")
 
     # ==============================
     # PROCESS TABLE
@@ -179,11 +180,14 @@ def round_robin():
     # ==============================
     # SYSTEM PERFORMANCE
     # ==============================
+    cpu_busy_time = sum(burst_time)
+    total_time = gantt_chart[-1][2]
+
     print("\nSYSTEM PERFORMANCE")
     print("CPU Busy Time:", cpu_busy_time)
     print("CPU Idle Time:", cpu_idle_time)
-    print("CPU Utilization:", cpu_utilization)
-    print("Throughput:", throughput)
+    print("CPU Utilization:", (cpu_busy_time / total_time) * 100)
+    print("Throughput:", process_count / total_time)
     print("Average Waiting Time:", total_waiting / process_count)
     print("Average Turnaround Time:", total_turnaround / process_count)
 
