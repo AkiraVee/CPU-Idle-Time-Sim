@@ -139,11 +139,19 @@ def fcfs():
     # PRINT PROCESS TABLE
     #==============================
     
-    print("\nPROCESS TABLE")
-    print("Process\tTurnaround\tWaiting")
+    print("\nPROCESS TABLE:")
+    print("-" * 75)
+    print(f"{'Process ID':<12}|{'Arrival Time':<15}|{'Burst Time':<12}|{'Turnaround':<12}|{'Waiting Time':<12}|")
+    print("-" * 75)
 
     for i in range(process_count):
-        print(f"P{i+1}\t{turnaround_time[i]}\t\t{waiting_time[i]}")
+        print(f"{'P'+str(i+1):<12}|{arrival_time[i]:<15}|{burst_time[i]:<12}|{turnaround_time[i]:<12}|{waiting_time[i]:<12}|")
+
+    print("-" * 75)
+
+    #Totals
+    print(f"{'Total':<12}|{'':<15}|{'':<12}|{total_turnaround:<12}|{total_waiting:<12}|")
+    print("-" * 75)
 
     #==============================
     # PRINT SYSTEM PERFORMANCE
