@@ -1,7 +1,7 @@
 # prio_sched_algorithm.py
 # Priority Scheduling Simulator (Non-Preemptive - FIXED Gantt)
 
-def non_preemptive_priority_scheduling():
+def npp_algorithm():
 
     # ==============================
     # INPUT SECTION
@@ -190,7 +190,7 @@ def non_preemptive_priority_scheduling():
 while True:
     print("\n=== Priority Scheduling (Non-Preemptive) Scheduling Simulator ===")
 
-    priority_scheduling()
+    npp_algorithm
 
     while True:
         again = input("\nDo you want to use the algorithm again? (Y/N): ").strip().upper()
