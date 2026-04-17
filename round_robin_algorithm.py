@@ -1,11 +1,12 @@
 # round_robin_algorithm.py
-# Round Robin CPU Scheduling (FIXED + MERGED GANTT)
+# Round Robin CPU Scheduling (Preemptive)
 
 def round_robin():
 
-    # ==============================
+    #==============================
     # INPUT SECTION
-    # ==============================
+    #==============================
+
     while True:
         try:
             process_count = int(input("\nENTER process count: "))
@@ -54,9 +55,10 @@ def round_robin():
         except ValueError:
             print("Invalid input! Please enter a positive integer.")
 
-    # ==============================
+    #==============================
     # INITIALIZATION
-    # ==============================
+    #==============================
+
     remaining_burst = burst_time.copy()
     start_time = [-1] * process_count
     finish_time = [0] * process_count
@@ -71,9 +73,9 @@ def round_robin():
     # Gantt as INTERVALS (IMPORTANT FIX)
     gantt_chart = []   # (label, start, end)
 
-    # ==============================
+    #==============================
     # MAIN LOOP
-    # ==============================
+    #==============================
     while completed < process_count:
 
         # Add newly arrived processes
@@ -130,9 +132,9 @@ def round_robin():
             finish_time[current] = current_time
             completed += 1
 
-    # ==============================
+    #==============================
     # COMPUTE TIMES
-    # ==============================
+    #==============================
     turnaround_time = []
     waiting_time = []
 
@@ -149,9 +151,9 @@ def round_robin():
         total_turnaround += tat
         total_waiting += wt
 
-    # ==============================
-    # GANTT OUTPUT (MERGED STYLE)
-    # ==============================
+    #==============================
+    # GANTT OUTPUT 
+    #==============================
     print("\nGANTT CHART:")
 
     for block in gantt_chart:
@@ -162,9 +164,9 @@ def round_robin():
         print(f"{block[1]:<5}", end="")
     print(f"{gantt_chart[-1][2]:<5}")
 
-    # ==============================
+    #==============================
     # PROCESS TABLE
-    # ==============================
+    #==============================
     print("\nPROCESS TABLE")
     print("-" * 75)
     print(f"{'Process ID':<12}|{'Arrival Time':<15}|{'Burst Time':<12}|{'Turnaround':<12}|{'Waiting Time':<12}|")
@@ -177,9 +179,9 @@ def round_robin():
     print(f"{'Total':<12}|{'':<15}|{'':<12}|{total_turnaround:<12}|{total_waiting:<12}|")
     print("-" * 75)
 
-    # ==============================
+    #==============================
     # SYSTEM PERFORMANCE
-    # ==============================
+    #==============================
     cpu_busy_time = sum(burst_time)
     total_time = gantt_chart[-1][2]
 
@@ -192,9 +194,9 @@ def round_robin():
     print("Average Turnaround Time:", total_turnaround / process_count)
 
 
-# ===============================
+#===============================
 # MAIN LOOP
-# ===============================
+#===============================
 while True:
     print("\n=== Round Robin (RR) Scheduling Simulator ===")
 

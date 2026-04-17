@@ -1,11 +1,11 @@
 # srtf_algorithm.py
-# Shortest Remaining Time First (Preemptive) — MERGED GANTT FIX
+# Shortest Remaining Time First (Preemptive)
 
 def srtf():
 
-    # ==============================
+    #==============================
     # INPUT
-    # ==============================
+    #==============================
     while True:
         try:
             process_count = int(input("\nENTER process count: "))
@@ -44,9 +44,9 @@ def srtf():
             except ValueError:
                 print("Invalid input! Please enter a positive integer.")
 
-    # ==============================
+    #==============================
     # INITIALIZATION
-    # ==============================
+    #==============================
     remaining = burst_time.copy()
     finish_time = [0] * process_count
 
@@ -60,9 +60,9 @@ def srtf():
     last_label = None
     segment_start = 0
 
-    # ==============================
+    #==============================
     # MAIN LOOP
-    # ==============================
+    #==============================
     while done < process_count:
 
         idx = -1
@@ -74,9 +74,9 @@ def srtf():
                     min_remaining = remaining[i]
                     idx = i
 
-        # ==============================
+        #==============================
         # IDLE CASE
-        # ==============================
+        #==============================
         if idx == -1:
             label = "ID"
 
@@ -92,9 +92,9 @@ def srtf():
 
         label = f"P{idx+1}"
 
-        # ==============================
+        #==============================
         # PROCESS SWITCH
-        # ==============================
+        #==============================
         if last_label != label:
             if last_label is not None:
                 gantt.append((last_label, segment_start, current_time))
@@ -138,9 +138,9 @@ def srtf():
     cpu_util = (cpu_busy_time / total_time) * 100
     throughput = process_count / total_time
 
-    # ==============================
-    # GANTT OUTPUT (MERGED)
-    # ==============================
+    #==============================
+    # GANTT OUTPUT 
+    #==============================
     print("\nGANTT CHART:")
 
     for g in gantt:
