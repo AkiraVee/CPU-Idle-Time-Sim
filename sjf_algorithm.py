@@ -200,3 +200,6 @@ while True:
         break
 
     print("\n" + "-" * 60)
+
+if __name__ == "__main__":
+    sjf()
