@@ -9,8 +9,8 @@ def preemptive_menu():
         print("\n==============================")
         print(" PREEMPTIVE SCHEDULING MENU")
         print("==============================")
-        print("1. Round Robin")
-        print("2. SRTF")
+        print("1. Round Robin (Preemptive)")
+        print("2. Shortest Remaining Time First (SRTF)(Preemptive)")
         print("3. Priority Scheduling (Preemptive)")
         print("4. Back")
 
@@ -30,7 +30,7 @@ def preemptive_menu():
             pp_algorithm.pp_algorithm()
 
         elif choice == "4":
-            print("Returning to main menu...")
+            print("\nReturning to main menu...")
             main_menu.main_menu()
             break
 

@@ -9,8 +9,8 @@ def non_preemptive_menu():
         print("\n==============================")
         print(" NON-PREEMPTIVE SCHEDULING MENU")
         print("==============================")
-        print("1. FCFS")
-        print("2. SJF")
+        print("1. First Come First-Served (FCFS) (Non-Preemptive)")
+        print("2. Shortest Job First (SJF)")
         print("3. Priority Scheduling (Non-Preemptive)")
         print("4. Back")
 
@@ -28,7 +28,7 @@ def non_preemptive_menu():
             npp_algorithm.npp_algorithm()
 
         elif choice == "4":
-            print("Returning to main menu...")
+            print("\nReturning to main menu...")
             main_menu.main_menu()
             break
 
