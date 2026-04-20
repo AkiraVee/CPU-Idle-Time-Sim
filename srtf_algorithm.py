@@ -186,7 +186,7 @@ def srtf_algorithm():
             if cont == "Y":
                 break
             elif cont == "N":
-                print("\nReturning to Preemptive Menu...")
+                print("\nReturning to Preemptive Scheduling Menu...")
                 return
             else:
                 print("Invalid input: Please enter Y or N.")
