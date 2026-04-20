@@ -1,86 +1,34 @@
-import fcfs_algorithm
-import sjf_algorithm
-import round_robin_algorithm
-import npp_algorithm
-import pp_algorithm
-import srtf_algorithm
+# main_menu.py
+
+import preemptive_menu
+import non_preemptive_menu
+import sys   # Needed for proper exit
 
 def main_menu():
-
     while True:
-        print("\n" + "=" * 40)
-        print("   CPU SCHEDULING SIMULATOR")
-        print("=" * 40)
-        print("1. FCFS (Non-Preemptive)")
-        print("2. SJF (Non-Preemptive)")
-        print("3. Priority (Non-Preemptive)")
-        print("4. Round Robin (Preemptive)")
-        print("5. Priority (Preemptive)")
-        print("6. SRTF (Preemptive)")
-        print("7. Exit")
+        print("\n====================================")
+        print(" CPU SCHEDULING MAIN MENU")
+        print("====================================")
+        print("A. Preemptive")
+        print("B. Non-Preemptive")
+        print("C. Exit")
 
-        choice = input("Enter your choice: ")
+        choice = input("\nSelect (A/B/C): ").upper()
 
-        if choice == "1":
-            while True:
-                print("\nRunning FCFS...\n")
-                fcfs_algorithm.fcfs()
+        if choice == "A":
+            print("\nYou selected Preemptive Scheduling")
+            preemptive_menu.preemptive_menu()
 
-                again = input("\nUse FCFS again? (Y/N): ").strip().upper()
-                if again != "Y":
-                    break
+        elif choice == "B":
+            print("\nYou selected Non-Preemptive Scheduling")
+            non_preemptive_menu.non_preemptive_menu()
 
-        elif choice == "2":
-            while True:
-                print("\nRunning SJF...\n")
-                sjf_algorithm.sjf()
-
-                again = input("\nUse SJF again? (Y/N): ").strip().upper()
-                if again != "Y":
-                    break
-
-        elif choice == "3":
-            while True:
-                print("\nRunning Priority (Non-Preemptive)...\n")
-                npp_algorithm.pp()
-
-                again = input("\nUse again? (Y/N): ").strip().upper()
-                if again != "Y":
-                    break
-
-        elif choice == "4":
-            while True:
-                print("\nRunning Round Robin...\n")
-                round_robin_algorithm.round_robin()
-
-                again = input("\nUse again? (Y/N): ").strip().upper()
-                if again != "Y":
-                    break
-
-        elif choice == "5":
-            while True:
-                print("\nRunning Priority (Preemptive)...\n")
-                pp_algorithm.pp()
-
-                again = input("\nUse again? (Y/N): ").strip().upper()
-                if again != "Y":
-                    break
-
-        elif choice == "6":
-            while True:
-                print("\nRunning SRTF...\n")
-                srtf_algorithm.srtf()
-
-                again = input("\nUse again? (Y/N): ").strip().upper()
-                if again != "Y":
-                    break
-
-        elif choice == "7":
-            print("Exiting...")
-            break
+        elif choice == "C":
+            print("\nExiting...")
+            sys.exit(0)  # Proper exit with status code 0
 
         else:
-            print("Invalid choice.")
+            print("\nInvalid choice: Must be A, B, or C. Please try again.")
 
 
 if __name__ == "__main__":
