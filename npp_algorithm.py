@@ -195,7 +195,3 @@ def npp_algorithm():
                 return
             else:
                 print("Invalid input: Must be Y or N. Please try again.")
-
-
-if __name__ == "__main__":
-    npp_algorithm()
