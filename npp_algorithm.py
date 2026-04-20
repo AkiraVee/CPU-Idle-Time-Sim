@@ -191,6 +191,7 @@ def npp_algorithm():
             if cont == "Y":
                 break
             elif cont == "N":
+                print("\nReturning to Non-Preemptive Scheduling Menu...")
                 return
             else:
                 print("Invalid input: Must be Y or N. Please try again.")

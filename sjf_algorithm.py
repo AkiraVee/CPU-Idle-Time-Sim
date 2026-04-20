@@ -188,6 +188,7 @@ def sjf():
             if cont == "Y":
                 break
             elif cont == "N":
+                print("Returning to Non-Preemptive Scheduling Menu...")
                 return
             else:
                 print("Invalid input: Must be Y or N. Please try again.")

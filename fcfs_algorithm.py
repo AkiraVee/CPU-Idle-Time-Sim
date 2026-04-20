@@ -177,7 +177,7 @@ def fcfs():
             if cont == "Y":
                 break
             elif cont == "N":
-                print("\nReturning to Non-Preemptive Menu...")
+                print("\nReturning to Non-Preemptive Scheduling Menu...")
                 return
             else:
                 print("Invalid input! Please enter Y or N.")
