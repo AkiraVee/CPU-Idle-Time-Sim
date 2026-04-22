@@ -1,8 +1,39 @@
 import sqlite3
 import hashlib
 import msvcrt  # Only for Windows password input with *
+import os
 
-DATABASE_FILE = "users.db"
+# NOTE:
+# The database file was being created in unexpected directories because of two issues:
+#
+# 1) The database path must be anchored to this script’s location, not the current
+#    working directory. Using os.path.abspath(__file__) ensures SQLite always uses
+#    the same users.db file regardless of how the program is run.
+#
+# 2) Defining DATABASE_FILE = "users.db" again later in the file overwrote the correct
+#    absolute path and caused SQLite to silently create a new database elsewhere.
+#    There must be ONLY ONE definition of DATABASE_FILE.
+#
+# Correct usage:
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# DATABASE_FILE = os.path.join(BASE_DIR, "users.db")
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE_FILE = os.path.join(BASE_DIR, "users.db")
+
+# >>> ADD FOR ADMIN <<<
+# Reserved administrator username
+ADMIN_USERNAME = "admin"
+
+
+# =========================
+# >>> UI ADDITION <<<
+# Consistent section header display
+# =========================
+def display_header(title):
+    print("\n==============================")
+    print(f"{title:^30}")
+    print("==============================")
 
 
 def hash_password(password):
@@ -46,6 +77,55 @@ def initialize_database():
     conn.close()
 
 
+# >>> ADD FOR ADMIN <<<
+# Safely add role column if missing
+def add_role_column_if_missing():
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+
+    cursor.execute("PRAGMA table_info(users)")
+    columns = [c[1] for c in cursor.fetchall()]
+
+    if "role" not in columns:
+        cursor.execute(
+            "ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'"
+        )
+        conn.commit()
+
+    conn.close()
+
+
+# >>> ADD FOR ADMIN <<<
+# Create default admin account automatically
+def create_default_admin():
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT username FROM users WHERE username = ?",
+        (ADMIN_USERNAME,)
+    )
+
+    if not cursor.fetchone():
+        cursor.execute('''
+            INSERT INTO users (
+                username, password,
+                security_question, security_answer,
+                role
+            )
+            VALUES (?, ?, ?, ?, ?)
+        ''', (
+            ADMIN_USERNAME,
+            hash_password("admin123"),
+            "Default admin question",
+            "admin",
+            "admin"
+        ))
+        conn.commit()
+
+    conn.close()
+
+
 # =========================
 # LOGIN OR SIGN UP
 # =========================
@@ -60,6 +140,7 @@ def login_or_signup():
         print("==============================")
 
         choice = input("Select options: ").strip()
+        print(f"\nSelect options: {choice}")  # >>> UI ADDITION <<<
 
         if choice == "1":
             return "login"
@@ -75,11 +156,16 @@ def login_or_signup():
 # SIGN UP
 # =========================
 def sign_up():
-    print("\n==============================")
-    print("          SIGN UP")
-    print("==============================")
+    display_header("SIGN UP")  # >>> UI ADDITION <<<
 
     username = input("Enter username: ")
+
+     # >>> ADD FOR ADMIN <<<
+    # Prevent use of reserved admin username
+    if username.lower() == ADMIN_USERNAME:
+        print("This username is reserved.")
+        return
+    
     password = get_password("Enter password: ")
     security_question = input("Enter security question: ")
     security_answer = input("Enter answer: ")
@@ -93,12 +179,16 @@ def sign_up():
         conn.close()
         return
 
-    hashed_pw = hash_password(password)
     cursor.execute('''
-        INSERT INTO users (username, password, security_question, security_answer)
-        VALUES (?, ?, ?, ?)
-    ''', (username, hashed_pw, security_question, security_answer))
-    
+        INSERT INTO users VALUES (?, ?, ?, ?, ?)
+    ''', (
+        username,
+        hash_password(password),
+        security_question,
+        security_answer,
+        "user"
+    ))
+
     conn.commit()
     conn.close()
     print("\nprint: account created successfully")
@@ -108,36 +198,38 @@ def sign_up():
 # LOGIN
 # =========================
 def login():
-    print("\n==============================")
-    print("           LOGIN")
-    print("==============================")
+    display_header("LOGIN")  # >>> UI ADDITION <<<
 
     username = input("Enter username: ")
     password = get_password("Enter password: ") 
 
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
-    cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
+
+    # >>> ADD FOR ADMIN <<<
+    cursor.execute(
+        "SELECT password, role FROM users WHERE username = ?",
+        (username,)
+    )
     result = cursor.fetchone()
     conn.close()
 
     if result and result[0] == hash_password(password):
-        print("\nPRINT: Welcome User")
-        main_menu_file()
+        if result[1] == "admin":
+            admin_menu()
+        else:
+            main_menu_file()
         return True
     else:
         print("\nPRINT: Incorrect username or password. Try again.")
         forgot_or_back()
         return False
 
-
 # =========================
 # FORGOT PASSWORD
 # =========================
 def forgot_password():
-    print("\n==============================")
-    print("      FORGOT PASSWORD")
-    print("==============================")
+    display_header("FORGOT PASSWORD")  # >>> UI ADDITION <<<1
 
     username = input("INPUT: Enter username: ")
 
@@ -188,14 +280,88 @@ def forgot_or_back():
         else:
             print("Invalid choice. Please try again.")
 
+# =========================
+# ADMIN MENU
+# =========================
+def admin_menu():
+    while True:
+        display_header("ADMIN MENU")  # >>> UI ADDITION <<<
+        print("1. View users")
+        print("2. Reset user password")
+        print("3. Promote user to admin")
+        print("4. Logout")
+
+        choice = input("Select: ")
+
+        if choice == "1":
+            view_users()
+        elif choice == "2":
+            reset_user_password()
+        elif choice == "3":
+            promote_user()
+        elif choice == "4":
+            break
+        else:
+            print("Invalid choice.")
+
+
+# =========================
+# ADMIN FEATURE 1
+# =========================
+def view_users():
+    display_header("USERS LIST")
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT username, role FROM users")
+    for u in cursor.fetchall():
+        print(f"- {u[0]} ({u[1]})")
+    conn.close()
+
+
+# =========================
+# ADMIN FEATURE 2
+# =========================
+def reset_user_password():
+    display_header("RESET PASSWORD")
+    username = input("User to reset password: ")
+    temp_password = "Temp123"
+
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE users SET password = ? WHERE username = ?",
+        (hash_password(temp_password), username)
+    )
+    conn.commit()
+    conn.close()
+
+    print("Password reset to temporary password: Temp123")
+
+
+# =========================
+# ADMIN FEATURE 3
+# =========================
+def promote_user():
+    display_header("PROMOTE USER")
+    username = input("Username to promote: ")
+
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE users SET role = 'admin' WHERE username = ?",
+        (username,)
+    )
+    conn.commit()
+    conn.close()
+
+    print("User promoted to admin (if user exists).")
+
 
 # =========================
 # MAIN MENU
 # =========================
 def main_menu_file():
-    print("\n==============================")
-    print("     MAIN MENU FILE")
-    print("==============================")
+    display_header("MAIN MENU FILE")  # >>> UI ADDITION <<<
     print("You have successfully entered the main menu.")
     print("(This is where your next file/system will continue.)")
 
@@ -205,6 +371,8 @@ def main_menu_file():
 # =========================
 def main():
     initialize_database()
+    add_role_column_if_missing()     # >>> ADD FOR ADMIN <<<
+    create_default_admin()           # >>> ADD FOR ADMIN <<<
 
     while True:
         action = login_or_signup()
